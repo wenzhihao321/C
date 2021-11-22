@@ -5,10 +5,10 @@ void SListPrint(SlistNode* hlist)
 	SlistNode* cur = hlist;
 	while (cur != NULL)
 	{
-		printf("%d ", cur->data);
+		printf("%d->", cur->data);
 		cur = cur->next;
 	}
-	printf("\n");
+	printf("NULL\n");
 }
 SlistNode* BuySlistNode(SlistType x)
 {
@@ -81,5 +81,113 @@ void SListPopFront(SlistNode** hhlist)
 		SlistNode* next = (*hhlist)->next;
 		free(*hhlist);
 		*hhlist = next;
+	}
+}
+SlistNode*SListFind(SlistNode* hlist, SlistType x)
+{
+	SlistNode* cur = hlist;
+	//while(cur!=NULL)
+	while (cur)
+	{
+		if (cur->data == x)
+		{
+			return cur;
+		}
+		cur = cur->next;
+	}
+	return NULL;
+}
+void SListInsetAfter(SlistNode* pos, SlistType x)
+{
+	assert(pos);
+	SlistNode* newnode = BuySlistNode(x);
+	newnode->next = pos->next;
+	pos->next = newnode;
+}
+void SListInsetBefore(SlistNode** hhlist,SlistNode* pos, SlistType x)
+{
+	assert(pos);
+	SlistNode* newnode = BuySlistNode(x);
+	if (pos == *hhlist)//Í·²å
+	{
+		newnode->next = pos;
+		*hhlist = newnode;
+	}
+	else
+	{
+		SlistNode* cur = *hhlist;
+		SlistNode* prev = NULL;
+		while (cur != pos)
+		{
+			prev = cur;
+			cur = cur->next;
+		}
+		prev->next = newnode;
+		newnode->next = pos;
+	}
+}
+void SListEraseAfter(SlistNode* pos)
+{
+	assert(pos);
+	if (pos->next == NULL)
+	{
+		return;
+	}
+	else
+	{
+		SlistNode* next = pos->next;
+		pos->next =next->next;
+		free(next);
+	}
+}
+void SListEraseBefore(SlistNode** hhlist, SlistNode* pos)
+{
+	assert(pos);
+	if (pos == *hhlist)
+	{
+		return;
+	}
+	else
+	{
+		SlistNode* cur = *hhlist;
+		if ((*hhlist)->next==pos)
+		{
+			*hhlist = pos;
+			free(cur);
+			cur = NULL;
+		}
+		else
+		{
+			while ((*hhlist)->next != pos)
+			{
+				cur = cur->next;
+			}
+			(*hhlist)->next = pos;
+			free(cur);
+			cur = NULL;
+		}
+	}
+}
+void SListEraseCur(SlistNode** hhlist, SlistNode* pos)
+{
+	assert(pos);
+	if (pos == *hhlist)
+	{
+		(*hhlist) = pos->next;
+		free(pos);
+		pos = NULL;
+	}
+	else
+	{
+		SlistNode* cur = *hhlist;
+		SlistNode* prev = NULL;
+		while (cur != pos)
+		{
+			prev = cur;
+			cur = cur->next;
+		}
+		prev->next = cur->next;
+		free(cur);
+		cur = NULL;
 	}
 }
