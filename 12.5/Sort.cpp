@@ -62,3 +62,96 @@ void ShellSort(int* a, int n)
 		Print(a, n);
 	}
 }
+void Swap(int* p1, int* p2)
+{
+	int tmp = *p1;
+	*p1 = *p2;
+	*p2 = tmp;
+}
+//选择排序    选出一个最大和最小的数，然后不断往里面缩
+void SelectSort(int* a, int n)
+{
+	int left=0, right=n-1;
+	int minIndex = left, maxIndex = left;
+	while (left < right)
+	{
+		//选出了最大的值和最小的值
+		for (int i = left; i <= right; i++)
+		{
+			if (a[minIndex] > a[i])
+			{
+				minIndex = i;
+			}
+			if (a[maxIndex] < a[i])
+			{
+				maxIndex = i;
+			}
+		}
+		Swap(&a[left], &a[minIndex]);
+		//如果max和left位置重叠，max被换走了，要修正一下max的位置
+		if (maxIndex == left)
+		{
+			maxIndex = minIndex;
+		}
+		Swap(&a[right], &a[maxIndex]);
+		left++;
+		right--;
+	}
+}
+void AdjustDwon(int* a, int n, int root)
+{
+	int parent = root;
+	int child = root * 2 + 1;
+	while (child<n)
+	{
+		if (child+1<n&&a[child] < a[child + 1])
+		{
+			child++;
+		}
+		if (a[parent] < a[child])
+		{
+			Swap(&a[parent], &a[child]);
+			parent = child;
+			child = parent * 2 + 1;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+void HeapSort(int* a, int n)
+{
+	//升序，建大堆
+	for (int i = (n - 1 - 1) / 2; i >= 0; i--)
+	{
+		AdjustDwon(a, n, i);
+	}
+	int tail = n;
+	for (int i = 0; i < n-1; i++)
+	{ 
+		Swap(&a[0], &a[tail-1]);
+		AdjustDwon(a, --tail, 0);
+	}
+}
+void BubbleSort(int* a, int n)
+{
+	for (int end = n; end > 0; end--)
+	{
+		int exchange = 0;
+		for (int i = 0; i < n - 1; i++)
+		{
+			if (a[i] > a[i + 1])
+			{
+				Swap(&a[i], &a[i + 1]);
+				exchange = 1;
+			}
+		}
+		if (exchange == 0)
+		{
+			break;
+		}
+	}
+
+
+}
