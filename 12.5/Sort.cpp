@@ -152,6 +152,124 @@ void BubbleSort(int* a, int n)
 			break;
 		}
 	}
-
-
 }
+
+//三数取中
+int GetMidIndex(int* a, int left, int right)
+{
+	//变为二进制右移一位
+	int mid = (left + right) >> 1;
+	// left  mid  right 
+	if (a[left] < a[mid])
+	{
+		if (a[mid] < a[right])
+		{
+			return mid;
+		}
+		else if (a[left] > a[right])
+		{
+			return left;
+		}
+		else
+		{
+			return right;
+		}
+	}
+	else //(a[left]> a[mid])
+	{
+		if (a[mid] > a[right])
+		{
+			return mid;
+		}
+		else if (a[left] < a[right])
+		{
+			return left;
+		}
+		else
+		{
+			return right;
+		}
+	}
+}
+//快速排序hoare版本单趟   左右指针法
+int PartSort1(int* a, int left, int right)
+{
+	int midindex = GetMidIndex(a, left, right);
+	Swap(&a[midindex], &a[left]);
+	int begin = left, end = right;
+	int key = left;
+	while (begin < end)
+	{
+		//找小	
+		while (begin < end && a[end] >= a[key])
+		{
+			end--;
+		}
+		//找大
+		while (begin < end && a[begin] <= a[key])
+		{
+			begin++;
+		}
+		Swap(&a[begin], &a[end]);
+	}
+	//相遇
+	Swap(&a[key], &a[begin]);
+	return begin;
+}
+
+int PartSort2(int* a, int left, int right)
+{
+	int midindex = GetMidIndex(a, left, right);
+	Swap(&a[midindex], &a[left]);
+	int key = a[left];
+	//左边的位置的值给了key，left位置变为坑
+	while (left < right)
+	{
+		//找小的值
+		while (left < right && a[right] >= key)
+		{
+			right--;
+		}
+		//放在左边的坑位中，右边就形成新坑位
+		a[left] = a[right];
+		//找大的值
+		while (left < right && a[left] <= key)
+		{
+			left++;
+		}
+		//放在右边的坑位中，左边就形成新坑位
+		a[right] = a[left];
+	}
+	a[left] = key;
+	return left;
+}
+int PartSort3(int* a, int left, int right)
+{
+	int key = left;
+	int prev = left, cur = left + 1;
+	while (cur <=right)
+	{
+		//找小的
+		if (a[cur] < a[key]&&++prev!=cur)
+		{
+			Swap(&a[prev], &a[cur]);
+		}
+		cur++;
+	}
+	Swap(&a[prev], &a[key]);
+	return prev;
+}
+void QuickSort(int* a, int left, int right)
+{
+	//当只有一个值的时候就停止
+	if (left >= right)
+	{
+		return;
+	}
+	//int meet = PartSort1(a,left,right);
+	//int meet = PartSort2(a, left, right);
+	int meet = PartSort3(a, left, right);
+	//每次传递的区间是[left，meet-1]  [meet+1,right]
+	QuickSort(a, left, meet - 1);
+	QuickSort(a,meet + 1, right);
+} 
