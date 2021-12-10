@@ -1,4 +1,5 @@
 #include"Sort.h"
+#include"Stack.h"
 void Print(int* a,int n)
 {
 	int i = 0;
@@ -243,8 +244,13 @@ int PartSort2(int* a, int left, int right)
 	a[left] = key;
 	return left;
 }
+// 快速排序前后指针法   
+//cur去找小的，找到了prev++然后cur和prev的值
+//当cur走到尾，交换prev个key的值
 int PartSort3(int* a, int left, int right)
 {
+	int midindex = GetMidIndex(a, left, right);
+	Swap(&a[midindex], &a[left]);
 	int key = left;
 	int prev = left, cur = left + 1;
 	while (cur <=right)
@@ -266,10 +272,54 @@ void QuickSort(int* a, int left, int right)
 	{
 		return;
 	}
-	//int meet = PartSort1(a,left,right);
-	//int meet = PartSort2(a, left, right);
-	int meet = PartSort3(a, left, right);
-	//每次传递的区间是[left，meet-1]  [meet+1,right]
-	QuickSort(a, left, meet - 1);
-	QuickSort(a,meet + 1, right);
+	//1.如果这个子区间是数据较多，继续选择key单趟，分割子区间分治递归
+	//2.如果这个子区间是数据较少，再去分治递归不划算
+	if (right - left > 10)
+	{
+		//int meet = PartSort1(a,left,right);
+		//int meet = PartSort2(a, left, right);
+		int meet = PartSort3(a, left, right);
+		//每次传递的区间是[left，meet-1]  [meet+1,right]
+		QuickSort(a, left, meet - 1);
+		QuickSort(a, meet + 1, right);
+	}
+	else//  right - left<10
+	{
+		InserSort(a + left, right - left + 1);
+	}
 } 
+//非递归
+//递归 现代编译器优化很好了，性能已经不是大问题
+// 最大的问题->递归深度太深，程序本身没有问题，但是栈空间不够，导致栈溢出
+// 只能改成非递归，改成非递归有两种方式：
+// 1、直接改循环->斐波那契数列求解
+// 2、树遍历非递归和快排非递归等等，只能用Stack存储数据模拟递归过程
+//
+//
+void QuickSortNonR(int* a, int left, int right)
+{
+	Stack pq;
+	StackInit(&pq);
+	StackPush(&pq, left);
+	StackPush(&pq, right);
+	while (!StackEmpty(&pq))
+	{
+		int begin, end;
+		end = StackTop(&pq);
+		StackPop(&pq);
+		begin = StackTop(&pq);
+		StackPop(&pq);
+		int key = PartSort1(a, begin, end);
+		if (begin < key - 1)
+		{
+			StackPush(&pq, begin);
+			StackPush(&pq, key - 1);
+		}
+		if (key + 1 < end)
+		{
+			StackPush(&pq, key + 1);
+			StackPush(&pq, end);
+		}
+	}
+	StackDestroy(&pq);
+}
