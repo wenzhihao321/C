@@ -294,8 +294,6 @@ void QuickSort(int* a, int left, int right)
 // 只能改成非递归，改成非递归有两种方式：
 // 1、直接改循环->斐波那契数列求解
 // 2、树遍历非递归和快排非递归等等，只能用Stack存储数据模拟递归过程
-//
-//
 void QuickSortNonR(int* a, int left, int right)
 {
 	Stack pq;
@@ -322,4 +320,80 @@ void QuickSortNonR(int* a, int left, int right)
 		}
 	}
 	StackDestroy(&pq);
+}
+//归并
+void _Merge(int*a,int*arr,int begin1,int end1,int begin2,int end2)
+{
+	int j = begin1;
+	int i = begin1;
+	while (begin1 <= end1 && begin2 <= end2)
+	{
+		if (a[begin1] < a[begin2])
+		{
+			arr[i++] = a[begin1++];
+		}
+		else//(a[begin1] > a[begin2])
+		{
+			arr[i++] = a[begin2++];
+		}
+	}
+	while (begin1 <= end1)
+	{
+		arr[i++] = a[begin1++];
+	}
+	while (begin2 <= end2)
+	{
+		arr[i++] = a[begin2++];
+	}
+	//归并完成以后，拷贝回到原数组
+	for (; j <= end2; j++)
+	{
+		a[j] = arr[j];
+	}
+}
+void _MergeSort(int* a,int*arr, int left,int right)
+{
+	if (left >= right)
+	{
+		return;
+	}
+	int mid = (left + right) >> 1;
+	//[left,mid]  [mid+1,right]
+	_MergeSort(a, arr, left, mid);
+	_MergeSort(a, arr, mid+1, right);
+	//两段有序子区间归并arr，并拷贝回去
+	int begin1 = left, end1 = mid;
+	int begin2 = mid + 1, end2 = right;
+	_Merge(a, arr, left, mid, mid + 1, right);
+}
+void MergeSort(int* a, int n)
+{
+	int* arr = (int*)malloc(sizeof(int) * n);
+	if (arr==NULL)
+	{
+		printf("malloc fail\n");
+		exit(-1);
+	}
+	_MergeSort(a, arr, 0, n - 1);
+	free(arr);
+}
+
+void MergeSortNonR(int* a, int n)
+{
+	int* arr = (int*)malloc(sizeof(int) * n);
+	if (arr == NULL)
+	{
+		printf("malloc fail\n");
+		exit(-1);
+	}
+	int gap = 1;
+	while (gap < n)
+	{
+		for (int i = 0; i < n; i += 2*gap)
+		{
+			_Merge(a, arr, i, i + gap - 1, i + gap, i + gap * 2 - 1);
+		}
+		gap *= 2;
+	}
+	free(arr);
 }
