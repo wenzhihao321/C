@@ -391,9 +391,53 @@ void MergeSortNonR(int* a, int n)
 	{
 		for (int i = 0; i < n; i += 2*gap)
 		{
-			_Merge(a, arr, i, i + gap - 1, i + gap, i + gap * 2 - 1);
+			int begin1 = i, end1 = i + gap - 1, begin2 = i + gap, end2 = i + gap * 2 - 1;
+			//如果第二个小区间（begin2位置）不存在就不需要归并了，结束本次循环
+			if (begin2 >= n)
+			{
+				break;
+			}
+			//如果第二个小区间存在，但是第二个小区间不够gap个（两个中的最后一个位置end2），
+			//结束位置越界，需要修正一下
+			if (end2 >= n)
+			{
+				end2 = n - 1;
+			}
+			_Merge(a, arr, begin1, end1, begin2, end2);
 		}
 		gap *= 2;
 	}
 	free(arr);
+}
+void CountSort(int* a, int n)
+{
+	int max = a[0], min = a[0];
+	for (int i = 0; i < n; i++)
+	{
+		if (a[i] < min)
+		{
+			min = a[i];
+		}
+		if (a[i] > max)
+		{
+			max = a[i];
+		}
+	}
+	//最后一个坐标加一才等于数组的个数
+	int range = max - min + 1;
+	int*count = (int*)malloc(sizeof(int) * range);
+	memset(count, 0, sizeof(int)*range);
+	for (int j = 0; j < n; j++)
+	{
+		count[a[j] -min]++;
+	}
+	int i = 0;
+	for (int j = 0; j < range; j++)
+	{
+		while (count[j]--)
+		{
+			a[i++] = j+min;
+		}
+	}
+	free(count);
 }
