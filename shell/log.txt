@@ -1,0 +1,7 @@
+total 28
+drwxrwxr-x  2 wzh wzh 4096 Jun 27 09:43 .
+drwxrwxr-t 19 wzh wzh 4096 Jun 27 08:40 ..
+-rw-r--r--  1 wzh wzh    0 Jun 27 09:43 log.txt
+-rw-rw-r--  1 wzh wzh   67 Jun 27 09:02 Makefile
+-rwxrwxr-x  1 wzh wzh 8976 Jun 27 09:42 myshell
+-rw-rw-r--  1 wzh wzh 1471 Jun 27 09:42 myshell.c
